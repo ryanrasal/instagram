@@ -5,7 +5,7 @@ export default function App() {
   return (
     <View>
       <Text className="text-red-500">
-        Open up App.js to start working on your app
+        coucou
       </Text>
       <View className="bg-red-500 h-60"/>
       <StatusBar style="auto" />
