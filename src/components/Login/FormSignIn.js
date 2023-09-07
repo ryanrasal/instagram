@@ -7,7 +7,7 @@ export default function FormSignIn({
   handleChangeEmail,
   handleChangePassword,
   toggleShowPassWord,
-  toggleIsSignedIn,
+  handleLogin,
   setFormSignIn,
   showPassWord,
   dataLogin,
@@ -43,7 +43,7 @@ export default function FormSignIn({
         </View>
       </View>
       <TouchableOpacity
-        onPress={toggleIsSignedIn}
+        onPress={handleLogin}
         className="bg-[#3747f6] mb-3 mx-10 p-3 rounded-lg"
       >
         <Text className="text-white font-bold text-center text-lg">

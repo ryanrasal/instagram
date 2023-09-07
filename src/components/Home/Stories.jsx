@@ -1,13 +1,23 @@
-import { View, Text } from "react-native";
+import { ScrollView, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 
-
-
-const Stories = () => {
+const Stories = ({ publications, navigation }) => {
   return (
-    <View>
-      <Text>Stories</Text>
-    </View>
+    <ScrollView horizontal={true} className="mt-10 mx-2">
+      {publications.map((publication) => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Settings")}
+          key={publication.id}
+          className="items-center"
+        >
+          <Image
+            className="h-14 w-14 mx-2 rounded-full"
+            source={publication.image}
+          />
+          <Text>{publication.pseudo}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
   );
 };
 

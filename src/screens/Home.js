@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import one from "../../assets/stories/one.jpg";
 import two from "../../assets/stories/two.jpg";
 import three from "../../assets/stories/three.jpg";
@@ -11,8 +11,9 @@ import nature3 from "../../assets/stories/nature3.jpg";
 import nature4 from "../../assets/stories/nature4.jpg";
 import nature5 from "../../assets/stories/nature5.jpg";
 import CardPublication from "../components/Home/CardPublication";
+import Stories from "../components/Home/Stories";
 
-export default function Home() {
+export default function Home({ navigation }) {
   const publications = [
     {
       id: 1,
@@ -64,6 +65,7 @@ export default function Home() {
 
   return (
     <ScrollView>
+      <Stories publications={publications} navigation={navigation} />
       {publications.map((publication) => (
         <CardPublication key={publication.id} publication={publication} />
       ))}

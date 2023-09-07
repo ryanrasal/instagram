@@ -1,10 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from "react";
+import { Text, View, Button } from "react-native";
+import { useUserContext } from "../services/UserContext";
+import { useLoginContext } from "../services/LoginContext";
 
-export default  Profil = () => {
+export default function Profil({ navigation }) {
+  const { userConnect } = useUserContext();
+  const { isSignedIn } = useLoginContext();
+
   return (
     <View>
-      <Text>Profil</Text>
+      <Text>coucou</Text>
+      <Button title="Aller vers Settings" onPress={() => console.log(userConnect)} />
     </View>
-  )
+  );
 }
