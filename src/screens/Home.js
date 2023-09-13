@@ -1,74 +1,124 @@
-import React from "react";
-import { ScrollView } from "react-native";
-import one from "../../assets/stories/one.jpg";
-import two from "../../assets/stories/two.jpg";
-import three from "../../assets/stories/three.jpg";
-import four from "../../assets/stories/four.jpg";
-import five from "../../assets/stories/five.jpg";
-import nature1 from "../../assets/stories/nature1.jpg";
-import nature2 from "../../assets/stories/nature2.jpg";
-import nature3 from "../../assets/stories/nature3.jpg";
-import nature4 from "../../assets/stories/nature4.jpg";
-import nature5 from "../../assets/stories/nature5.jpg";
+import React, { useState, useEffect } from "react";
+import { ScrollView, View, Button } from "react-native";
 import CardPublication from "../components/Home/CardPublication";
 import Stories from "../components/Home/Stories";
+import { useUserContext } from "../services/UserContext";
+
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
 export default function Home({ navigation }) {
-  const publications = [
-    {
-      id: 1,
-      lastname: "Patrick",
-      firstname: "Swayze",
-      pseudo: "Patouche",
-      image: one,
-      imageVideoURL: nature1,
-      legende:
-        "Le soleil se couche lentement derrière les montagnes, teintant le ciel d'une palette de couleurs chaudes. Les derniers rayons de lumière se reflètent sur les eaux calmes du lac, créant un miroir étincelant de la nature environnante.Les arbres, vêtus de leurs feuilles d'automne, se balancent doucement dans la brise légère. Le parfum des fleurs sauvages embaume l'air, ajoutant une touche sucrée à l'atmosphère sereine.Au loin, on peut apercevoir un groupe d'oiseaux migrateurs qui traversent le ciel en formant une V majestueuse. Leurs appels mélodieux se mélangent aux sons apaisants de la nature, créant une symphonie harmonieuse.Dans ce paysage enchanteur, la tranquillité règne en maître. Le temps semble s'arrêter, offrant un moment de calme et de contemplation. C'est un endroit où l'on peut se perdre dans la beauté de la nature et se ressourcer en puisant dans la force de cet environnement paisible.",
-    },
-    {
-      id: 2,
-      lastname: "Kennedi",
-      firstname: "Patricia",
-      pseudo: "Pali",
-      image: two,
-      imageVideoURL: nature2,
-      legende: "Ceci est le legendee de l'utilisateur 1.",
-    },
-    {
-      id: 3,
-      lastname: "Garcia",
-      firstname: "Maria",
-      pseudo: "maria_garcia",
-      image: three,
-      imageVideoURL: nature3,
-      legende: "Ceci est le legendee de l'utilisateur 1.",
-    },
-    {
-      id: 4,
-      lastname: "Kim",
-      firstname: "Sung",
-      pseudo: "sungkim",
-      image: four,
-      imageVideoURL: nature4,
-      legende: "Ceci est le legendee de l'utilisateur 1.",
-    },
-    {
-      id: 5,
-      lastname: "Müller",
-      firstname: "Hans",
-      pseudo: "hans_mueller",
-      image: five,
-      imageVideoURL: nature5,
-      legende: "Ceci est le texte de l'utilisateur 1.",
-    },
-  ];
+  const { userConnect, reloadPublication, setReloadPublication } =
+    useUserContext();
+
+  const [publications, setPublications] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  // filtre les users pour ne pas afficher le user connecté
+  const connectedUserEmail = userConnect ? userConnect[0]?.email : null;
+  const otherUsers = users.filter((user) => user?.email !== connectedUserEmail)
+
+  // récupere les users
+  useEffect(() => {
+    fetch(`${ADDRESS_BACK_END}/users`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des utilisateurs", error);
+      });
+  }, []);
+
+  // récupere les publications
+  useEffect(() => {
+    fetch(`${ADDRESS_BACK_END}/publications`)
+      .then((response) => response.json())
+      .then((data) => {
+        const reverseData = data?.reverse();
+        setPublications(reverseData);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération des utilisateurs:",
+          error
+        );
+      });
+  }, [reloadPublication]);
+
+  // navigation vers le profil d'un user
+  function navigateToProfil(userId) {
+    navigation.navigate("Profil", {
+      user: users.find((user) => user.id === userId),
+    });
+  }
+
+  const likePost = (publication) => {
+    // récupère le like d'une publication  WHERE user_id = ${userId} AND publication_id = ${publicationId}`;
+    try {
+      fetch(
+        `${ADDRESS_BACK_END}/likepublication/byId?publicationId=${publication.id}&userId=${userConnect[0].id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((likeExists) => {
+          // si likeCount === 0, qu'il n'y a pas de like de l'utilisateur sur cette publication
+          if (likeExists[0]?.likeCount === 0) {
+            return fetch(`${ADDRESS_BACK_END}/likepublication`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user_id: userConnect[0]?.id,
+                publication_id: publication.id,
+              }),
+            });
+          } else {
+            return fetch(
+              `${ADDRESS_BACK_END}/likepublication/${likeExists[0]?.id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+          }
+        })
+        .then(() => {
+          setReloadPublication(!reloadPublication);
+        })
+        .catch((error) => {
+          console.error("Erreur lors de la requête :", error);
+        });
+    } catch (error) {
+      console.error("Erreur lors de la requête :", error);
+    }
+  };
 
   return (
-    <ScrollView>
-      <Stories publications={publications} navigation={navigation} />
-      {publications.map((publication) => (
-        <CardPublication key={publication.id} publication={publication} />
-      ))}
-    </ScrollView>
+    <View>
+      <Stories otherUsers={otherUsers} navigateToProfil={navigateToProfil} />
+      {/* <Button onPress={() => console.warn(dataLike)} title="press me" /> */}
+      <ScrollView className="mb-52">
+        {publications.map((publication) => (
+          <CardPublication
+            key={publication.id}
+            likePost={likePost}
+            publication={publication}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 }

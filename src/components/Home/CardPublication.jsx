@@ -1,16 +1,12 @@
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Button, Image, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default CardPublication = ({ publication }) => {
-  const [isLike, setIsLike] = React.useState(true);
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
-  const toggleHeart = () => {
-    setIsLike(!isLike);
-  };
-
+export default CardPublication = ({ publication, likePost }) => {
   const cutText = (str) => {
-    if (str.length > 150) {
+    if (str?.length > 150) {
       return str.slice(0, 150) + "...";
     }
     return str;
@@ -18,12 +14,18 @@ export default CardPublication = ({ publication }) => {
 
   return (
     <View>
+      {/* <Button onPress={() => console.warn(publication)} title="button" /> */}
       <View className="flex-row items-center mx-3 mt-6 mb-3 ">
         <Image
           className="rounded-full h-10 w-10 mr-3 "
-          source={publication.image}
+          source={{
+            uri: publication?.userImage,
+          }}
         />
-        <Text>{publication.pseudo}</Text>
+        <Text className="text-md font-bold mr-2">
+          {publication?.userFirstname}
+        </Text>
+        <Text className="text-md font-bold ">{publication?.userLastname}</Text>
         <Ionicons
           style={{ marginLeft: "auto" }}
           name="md-ellipsis-vertical-sharp"
@@ -31,33 +33,41 @@ export default CardPublication = ({ publication }) => {
           color="black"
         />
       </View>
-      <Image className="w-full h-48" source={publication.imageVideoURL} />
-      <View className="flex-row ml-2 my-2">
-        <TouchableOpacity onPress={toggleHeart}>
-          {isLike ? (
-            <Ionicons
-              style={{ marginRight: 20, marginTop: 10 }}
-              name="ios-heart-outline"
-              size={28}
-              color="black"
-            />
-          ) : (
-            <Ionicons
-              style={{ marginRight: 20, marginTop: 10 }}
-              name="heart"
-              size={28}
-              color="red"
-            />
-          )}
-        </TouchableOpacity>
+      <Image
+        className="w-full h-48"
+        source={{
+          uri: `${ADDRESS_BACK_END}/uploads/${publication.imageVideoURL}`,
+        }}
+      />
+      {publication?.nbLikes === 0 ? (
+        ""
+      ) : publication?.nbLikes === 1 ? (
+        <Text className="font-bold text-base ml-2 mt-1">
+          {" "}
+          {publication?.nbLikes} j'aime
+        </Text>
+      ) : (
+        <Text className="font-bold text-base ml-2 mt-1">
+          {" "}
+          {publication?.nbLikes} j'aimes
+        </Text>
+      )}
+      <View className="flex-row ml-2 mb-2">
         <Ionicons
-          style={{ marginRight: 20, marginTop: 10 }}
+          onPress={() => likePost(publication)}
+          style={{ marginRight: 20, marginTop: 5 }}
+          name="ios-heart-outline"
+          size={28}
+          color="black"
+        />
+        <Ionicons
+          style={{ marginRight: 20, marginTop: 5 }}
           name="ios-chatbubble-outline"
           size={24}
           color="black"
         />
         <Ionicons
-          style={{ marginRight: 20, marginTop: 10 }}
+          style={{ marginRight: 20, marginTop: 5 }}
           name="send-outline"
           size={24}
           color="black"

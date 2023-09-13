@@ -25,9 +25,8 @@ export const LoginProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Appelez la fonction pour récupérer isLogin depuis AsyncStorage au chargement du composant
     getIsLoginFromStorage();
-  }, []); // Assurez-vous de mettre une dépendance vide pour que cela soit exécuté une seule fois
+  }, [isSignedIn]);
 
   const toggleIsSignedIn = () => {
     setIsSignIn(!isSignedIn);

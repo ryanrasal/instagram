@@ -1,0 +1,9 @@
+const FriendManager = require("../../model/FriendManager");
+
+async function addFriendController(req, res) {
+  const { status, message } = await FriendManager.insertAddFriend(req.body);
+
+  return res.status(status).json(message);
+}
+
+module.exports = addFriendController;

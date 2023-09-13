@@ -5,11 +5,13 @@ import FormSignIn from "../components/Login/FormSignIn";
 import FormSignUp from "../components/Login/FormSignUp";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLoginContext } from "../services/LoginContext";
+import { useUserContext } from "../services/UserContext";
 
-const serverIpAddress = "http://192.168.1.21:5000";
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
 export default function SignIn() {
   const { isSignedIn, toggleIsSignedIn } = useLoginContext();
+  const { reloadUserConnect, setReloadUserConnect } = useUserContext();
   // UseState Pour le Formulaire d'inscription
   const [dataFormSignUp, setFormSignUp] = useState({
     firstname: "",
@@ -49,7 +51,7 @@ export default function SignIn() {
   };
 
   const handleLogin = () => {
-    fetch(`${serverIpAddress}/authentification`, {
+    fetch(`${ADDRESS_BACK_END}/authentification`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +69,6 @@ export default function SignIn() {
         }
       })
       .then((data) => {
-        toggleIsSignedIn();
         AsyncStorage.setItem("userConnect", JSON.stringify(data.userConnect));
         AsyncStorage.setItem("isLogin", JSON.stringify(true)).catch((error) => {
           console.error(
@@ -75,6 +76,10 @@ export default function SignIn() {
             error
           );
         });
+        setReloadUserConnect(!reloadUserConnect);
+        setTimeout(() => {
+          toggleIsSignedIn();
+        }, 1000);
       });
   };
 

@@ -6,34 +6,38 @@ const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  const [userConnect, setUserConnect] = useState(null);
+  const [reloadUserConnect, setReloadUserConnect] = useState(false);
+  const [reloadPublication, setReloadPublication] = useState(false);
+  const [userConnect, setUserConnect] = useState({});
+
+  const getUserData = async () => {
+    try {
+      const userConnectData = await AsyncStorage.getItem("userConnect");
+      if (userConnectData !== null) {
+        setUserConnect(JSON.parse(userConnectData));
+      }
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des données utilisateur depuis AsyncStorage :",
+        error
+      );
+    }
+  };
 
   useEffect(() => {
-    // Récupérer les données utilisateur depuis AsyncStorage lors du chargement de l'application
-    const getUserData = async () => {
-      try {
-        const userConnectData = await AsyncStorage.getItem("userConnect");
-        if (userConnectData !== null) {
-          setUserConnect(JSON.parse(userConnectData));
-        }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des données utilisateur depuis AsyncStorage :",
-          error
-        );
-      }
-    };
-
     getUserData();
-  }, [setUserConnect]);
-
-  const logout = () => {
-    setUserConnect(null);
-  };
+  }, [reloadUserConnect]);
 
   return (
     <UserContext.Provider
-      value={{ userConnect, setUserConnect, logout }}
+      value={{
+        userConnect,
+        setUserConnect,
+        setReloadUserConnect,
+        reloadUserConnect,
+        reloadPublication,
+        setReloadPublication,
+      }}
     >
       {children}
     </UserContext.Provider>

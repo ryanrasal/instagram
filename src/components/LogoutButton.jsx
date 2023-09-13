@@ -3,19 +3,21 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLoginContext } from "../services/LoginContext";
 import { useNavigation } from "@react-navigation/native";
+import { useUserContext } from "../services/UserContext";
 import fond from "../../assets/fond.png";
 
 const LogoutButton = () => {
   const { toggleIsSignedIn } = useLoginContext();
+  const { setUserConnect } = useUserContext();
   const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
       // Efface les données du localStorage
       await AsyncStorage.removeItem("isLogin");
-      // Déconnecte l'utilisateur en utilisant le contexte de connexion
+      await AsyncStorage.removeItem("userConnect");
+      setUserConnect({});
       toggleIsSignedIn(false);
-      // Navigue vers la page SignIn
       navigation.navigate("SignIn");
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error);
@@ -23,7 +25,7 @@ const LogoutButton = () => {
   };
 
   const handleHome = () => {
-    navigation.navigate("Home");
+    navigation.navigate("Accueil");
   };
 
   return (
