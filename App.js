@@ -4,12 +4,11 @@ import { LoginProvider } from "./src/services/LoginContext";
 import { UserProvider } from "./src/services/UserContext";
 
 export default function App() {
-
   return (
     <UserProvider>
-      <LoginProvider>
-        <Index />
-      </LoginProvider>
+        <LoginProvider>
+          <Index />
+        </LoginProvider>
     </UserProvider>
   );
 }

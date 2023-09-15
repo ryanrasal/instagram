@@ -34,7 +34,6 @@ export default PostPublication = ({ navigation }) => {
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      console.log("je suis le console de lupload", result.assets[0].uri);
     }
   };
 
@@ -137,18 +136,12 @@ export default PostPublication = ({ navigation }) => {
       />
 
       <TouchableOpacity
-        style={{
-          padding: 10,
-          marginTop: 30,
-          borderRadius: 10,
-          backgroundColor: "white",
-          width: 200,
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
+        className="bg-[#3747f6] my-3 mx-10 p-3 rounded-lg"
         onPress={onSubmit}
       >
-        <Text style={{ textAlign: "center" }}>Poster la Publication</Text>
+        <Text className="text-white font-bold text-center text-lg">
+          Poster la Publication
+        </Text>
       </TouchableOpacity>
     </View>
   );

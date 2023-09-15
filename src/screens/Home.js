@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, Button } from "react-native";
+import { ScrollView, View, TextInput, Button } from "react-native";
 import CardPublication from "../components/Home/CardPublication";
 import Stories from "../components/Home/Stories";
 import { useUserContext } from "../services/UserContext";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
@@ -12,22 +13,9 @@ export default function Home({ navigation }) {
 
   const [publications, setPublications] = useState([]);
   const [users, setUsers] = useState([]);
-
-  // filtre les users pour ne pas afficher le user connecté
-  const connectedUserEmail = userConnect ? userConnect[0]?.email : null;
-  const otherUsers = users.filter((user) => user?.email !== connectedUserEmail)
-
-  // récupere les users
-  useEffect(() => {
-    fetch(`${ADDRESS_BACK_END}/users`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUsers(data);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des utilisateurs", error);
-      });
-  }, []);
+  const [textSearchUser, setTextSearchUser] = useState("");
+  const [toggleSearch, setToggleSearch] = useState(true);
+  const [likes, setLikes] = useState([]);
 
   // récupere les publications
   useEffect(() => {
@@ -70,9 +58,10 @@ export default function Home({ navigation }) {
           }
           return response.json();
         })
-        .then((likeExists) => {
-          // si likeCount === 0, qu'il n'y a pas de like de l'utilisateur sur cette publication
-          if (likeExists[0]?.likeCount === 0) {
+        .then((response) => {
+          setLikes(response);
+          // si response === 0, qu'il n'y a pas de like de l'utilisateur sur cette publication
+          if (response[0]?.likeCount === 0) {
             return fetch(`${ADDRESS_BACK_END}/likepublication`, {
               method: "POST",
               headers: {
@@ -85,7 +74,7 @@ export default function Home({ navigation }) {
             });
           } else {
             return fetch(
-              `${ADDRESS_BACK_END}/likepublication/${likeExists[0]?.id}`,
+              `${ADDRESS_BACK_END}/likepublication/${response[0]?.id}`,
               {
                 method: "DELETE",
                 headers: {
@@ -106,19 +95,66 @@ export default function Home({ navigation }) {
     }
   };
 
+  const searchUser = () => {
+    setToggleSearch(!toggleSearch);
+    fetch(
+      `${ADDRESS_BACK_END}/users/search?userName=${textSearchUser}&userEmail=${userConnect[0].email}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUsers(data);
+      });
+  };
+
   return (
-    <View>
-      <Stories otherUsers={otherUsers} navigateToProfil={navigateToProfil} />
-      {/* <Button onPress={() => console.warn(dataLike)} title="press me" /> */}
-      <ScrollView className="mb-52">
-        {publications.map((publication) => (
-          <CardPublication
-            key={publication.id}
-            likePost={likePost}
-            publication={publication}
-          />
-        ))}
-      </ScrollView>
+    <View className="bg-white">
+      <View className="flex-row items-center ml-4 mt-12 relative">
+        <View style={{ width: 30, height: 30 }}>
+          {toggleSearch ? null : (
+            <MaterialCommunityIcons
+              size={30}
+              name="arrow-left-bold-outline"
+              onPress={() => setToggleSearch(!toggleSearch)}
+            />
+          )}
+        </View>
+        <TextInput
+          className="border p-2 rounded-lg w-2/3 mx-3"
+          placeholder="Rechercher..."
+          onChangeText={setTextSearchUser}
+        />
+
+        <MaterialCommunityIcons
+          size={30}
+          name="account-search-outline"
+          onPress={searchUser}
+        />
+      </View>
+      <Button onPress={() => console.warn(likes)} title="press me " />
+      {!toggleSearch ? (
+        <Stories users={users} navigateToProfil={navigateToProfil} />
+      ) : (
+        <ScrollView className={publications.length < 0 ? `pb-36` : "h-screen"}>
+          {publications.map((publication) => (
+            <CardPublication
+              key={publication.id}
+              likePost={likePost}
+              publication={publication}
+            />
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 }

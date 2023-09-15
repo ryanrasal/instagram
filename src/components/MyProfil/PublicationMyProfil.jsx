@@ -3,7 +3,6 @@ import React from "react";
 
 const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
-
 export default PublicationMyProfil = ({ publication }) => {
   return (
     <TouchableOpacity

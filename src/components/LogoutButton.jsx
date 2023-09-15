@@ -11,17 +11,12 @@ const LogoutButton = () => {
   const { setUserConnect } = useUserContext();
   const navigation = useNavigation();
 
-  const handleLogout = async () => {
-    try {
-      // Efface les données du localStorage
-      await AsyncStorage.removeItem("isLogin");
-      await AsyncStorage.removeItem("userConnect");
-      setUserConnect({});
-      toggleIsSignedIn(false);
+  const handleLogout = () => {
+    AsyncStorage.clear();
+    toggleIsSignedIn(false);
+    setTimeout(() => {
       navigation.navigate("SignIn");
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
-    }
+    }, 1500);
   };
 
   const handleHome = () => {

@@ -1,14 +1,14 @@
-import { ScrollView, Text, TouchableOpacity, Image } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 
-const Stories = ({ otherUsers, navigateToProfil }) => {
+const Stories = ({ users, navigateToProfil }) => {
   return (
-    <ScrollView horizontal={true} className="mt-10 h-32 mx-2 fixed top-0">
-      {otherUsers.map((user) => (
+    <ScrollView className="my-4 h-screen mx-2 bg-white">
+      {users.map((user) => (
         <TouchableOpacity
           key={user.id}
           onPress={() => navigateToProfil(user.id)}
-          className="flex-col mx-3"
+          className="flex-row mx-3 my-3 shadow-lg items-center "
         >
           <Image
             className="h-20 w-20 rounded-full"
@@ -16,7 +16,10 @@ const Stories = ({ otherUsers, navigateToProfil }) => {
               uri: user.image,
             }}
           />
-          <Text className="text-black text-center">{user.pseudo}</Text>
+          <View className="flex-row">
+            <Text className="text-black text-center font-bold mx-1">{user.firstname}</Text>
+            <Text className="text-black text-center font-bold mx-1">{user.lastname}</Text>
+          </View>
         </TouchableOpacity>
       ))}
     </ScrollView>

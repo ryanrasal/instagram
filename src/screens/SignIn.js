@@ -10,8 +10,9 @@ import { useUserContext } from "../services/UserContext";
 const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
 export default function SignIn() {
-  const { isSignedIn, toggleIsSignedIn } = useLoginContext();
-  const { reloadUserConnect, setReloadUserConnect } = useUserContext();
+  const { toggleIsSignedIn } = useLoginContext();
+  const { reloadUserConnect, setReloadUserConnect } =
+    useUserContext();
   // UseState Pour le Formulaire d'inscription
   const [dataFormSignUp, setFormSignUp] = useState({
     firstname: "",
@@ -70,16 +71,19 @@ export default function SignIn() {
       })
       .then((data) => {
         AsyncStorage.setItem("userConnect", JSON.stringify(data.userConnect));
-        AsyncStorage.setItem("isLogin", JSON.stringify(true)).catch((error) => {
-          console.error(
-            "Erreur lors de l'enregistrement de l'utilisateur dans AsyncStorage :",
-            error
-          );
-        });
-        setReloadUserConnect(!reloadUserConnect);
+        AsyncStorage.setItem("isLogin", JSON.stringify(true))
+          .catch((error) => {
+            console.error(
+              "Erreur lors de l'enregistrement de l'utilisateur dans AsyncStorage :",
+              error
+            );
+          })
+          .then(() => {
+            setReloadUserConnect(!reloadUserConnect);
+          });
         setTimeout(() => {
           toggleIsSignedIn();
-        }, 1000);
+        }, 2000);
       });
   };
 
