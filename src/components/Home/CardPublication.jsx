@@ -1,16 +1,57 @@
 import React from "react";
-import { Button, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Button,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
-export default CardPublication = ({ publication, likePost }) => {
+export default CardPublication = ({
+  publication,
+  likePost,
+  likes,
+  userConnect,
+  deletePublication,
+}) => {
   const cutText = (str) => {
     if (str?.length > 150) {
       return str.slice(0, 150) + "...";
     }
     return str;
   };
+
+  const showAlert = (publication) =>
+    Alert.alert(
+      "Voulez-vous vraiment supprimer cette publication ? ",
+      undefined,
+      [
+        {
+          text: "SUPPRIMER",
+          onPress: () => deletePublication(publication),
+        },
+        {
+          text: "RETOUR",
+          onPress: () => {},
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => {},
+      }
+    );
+
+  // Vérifie si la publication a été aimée par l'utilisateur connecté
+  const isLikedByUser = likes.some(
+    (like) =>
+      like.publication_id === publication.id &&
+      like.user_id === userConnect[0].id
+  );
 
   return (
     <View>
@@ -26,12 +67,14 @@ export default CardPublication = ({ publication, likePost }) => {
           {publication?.userFirstname}
         </Text>
         <Text className="text-md font-bold ">{publication?.userLastname}</Text>
-        <Ionicons
-          style={{ marginLeft: "auto" }}
-          name="md-ellipsis-vertical-sharp"
-          size={24}
-          color="black"
-        />
+        {userConnect[0].id === publication.userId && (
+          <Ionicons
+            style={{ marginLeft: "auto" }}
+            name="md-ellipsis-vertical-sharp"
+            size={24}
+            color="black"
+          />
+        )}
       </View>
       <Image
         className="w-full h-48"
@@ -53,14 +96,26 @@ export default CardPublication = ({ publication, likePost }) => {
         </Text>
       )}
       <View className="flex-row ml-2 mb-2">
+        {isLikedByUser ? (
+          <Ionicons
+            onPress={() => likePost(publication)}
+            style={{ marginRight: 20, marginTop: 5 }}
+            name="ios-heart"
+            size={28}
+            color="red"
+          />
+        ) : (
+          <Ionicons
+            onPress={() => likePost(publication)}
+            style={{ marginRight: 20, marginTop: 5 }}
+            name="ios-heart-outline"
+            size={28}
+            color="black"
+          />
+        )}
+
         <Ionicons
-          onPress={() => likePost(publication)}
-          style={{ marginRight: 20, marginTop: 5 }}
-          name="ios-heart-outline"
-          size={28}
-          color="black"
-        />
-        <Ionicons
+          onPress={() => showAlert(publication)}
           style={{ marginRight: 20, marginTop: 5 }}
           name="ios-chatbubble-outline"
           size={24}

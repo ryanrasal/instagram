@@ -37,6 +37,8 @@ export default function SignIn() {
     password: "",
   });
 
+  const [dataSignUp, setDataSignUp] = useState({})
+
   const handleChangeEmail = (text) => {
     setDataLogin({ ...dataLogin, email: text });
   };
@@ -90,11 +92,10 @@ export default function SignIn() {
   return (
     <View className="h-[100%]">
       <Image
-        className="h-[100%] absolute top-0 bottom-0 left-0 right-0"
+        className="h-full absolute inset-0"
         source={fond}
       />
       <View className="mt-24">
-        <Text className="text-white text-3xl mb-6 mx-auto">Instagram</Text>
         {formSignIn ? (
           <FormSignIn
             handleChangeEmail={handleChangeEmail}

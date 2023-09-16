@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, TextInput, Button } from "react-native";
+import { ScrollView, View, ToastAndroid } from "react-native";
 import CardPublication from "../components/Home/CardPublication";
 import Stories from "../components/Home/Stories";
 import { useUserContext } from "../services/UserContext";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import SearchUser from "../components/Home/SearchUser";
 
 const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
@@ -17,11 +17,27 @@ export default function Home({ navigation }) {
   const [toggleSearch, setToggleSearch] = useState(true);
   const [likes, setLikes] = useState([]);
 
+  // récupere les likePublications
+  useEffect(() => {
+    fetch(`${ADDRESS_BACK_END}/likepublication`)
+      .then((response) => response.json())
+      .then((data) => {
+        setLikes(data);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération des utilisateurs:",
+          error
+        );
+      });
+  }, [reloadPublication]);
+
   // récupere les publications
   useEffect(() => {
     fetch(`${ADDRESS_BACK_END}/publications`)
       .then((response) => response.json())
       .then((data) => {
+        console.warn(data);
         const reverseData = data?.reverse();
         setPublications(reverseData);
       })
@@ -40,6 +56,7 @@ export default function Home({ navigation }) {
     });
   }
 
+  // vérifie si un like est dans la publication, si non, post un like, sinon delete le like
   const likePost = (publication) => {
     // récupère le like d'une publication  WHERE user_id = ${userId} AND publication_id = ${publicationId}`;
     try {
@@ -95,6 +112,7 @@ export default function Home({ navigation }) {
     }
   };
 
+  // récupere les users de la bdd via inputText
   const searchUser = () => {
     setToggleSearch(!toggleSearch);
     fetch(
@@ -117,31 +135,31 @@ export default function Home({ navigation }) {
       });
   };
 
+  const deletePublication = (publication) => {
+    fetch(`${ADDRESS_BACK_END}/publications/${publication.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(() => {
+      ToastAndroid.show(
+        " ✅ Publication supprimée ✅ !",
+        ToastAndroid.SHORT
+      );
+      setReloadPublication(!reloadPublication);
+    });
+  };
+
   return (
     <View className="bg-white">
-      <View className="flex-row items-center ml-4 mt-12 relative">
-        <View style={{ width: 30, height: 30 }}>
-          {toggleSearch ? null : (
-            <MaterialCommunityIcons
-              size={30}
-              name="arrow-left-bold-outline"
-              onPress={() => setToggleSearch(!toggleSearch)}
-            />
-          )}
-        </View>
-        <TextInput
-          className="border p-2 rounded-lg w-2/3 mx-3"
-          placeholder="Rechercher..."
-          onChangeText={setTextSearchUser}
-        />
-
-        <MaterialCommunityIcons
-          size={30}
-          name="account-search-outline"
-          onPress={searchUser}
-        />
-      </View>
-      <Button onPress={() => console.warn(likes)} title="press me " />
+      <SearchUser
+        toggleSearch={toggleSearch}
+        setToggleSearch={setToggleSearch}
+        setTextSearchUser={setTextSearchUser}
+        searchUser={searchUser}
+      />
+      {/* <Button onPress={() => console.warn(likes)} title="press me " /> */}
+      {/* si toggleSearch est false, affiche les user de la recherche, sinon affiche les publications */}
       {!toggleSearch ? (
         <Stories users={users} navigateToProfil={navigateToProfil} />
       ) : (
@@ -150,7 +168,10 @@ export default function Home({ navigation }) {
             <CardPublication
               key={publication.id}
               likePost={likePost}
+              likes={likes}
+              userConnect={userConnect}
               publication={publication}
+              deletePublication={deletePublication}
             />
           ))}
         </ScrollView>

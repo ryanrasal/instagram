@@ -14,6 +14,7 @@ export default function FormSignIn({
 }) {
   return (
     <View>
+      <Text className="text-white text-3xl mb-6 mx-auto">Instagram</Text>
       <Image className="h-20 w-20 mx-auto mb-3" source={logoInsta} />
       <View>
         <TextInput
