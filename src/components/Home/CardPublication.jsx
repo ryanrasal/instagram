@@ -49,8 +49,8 @@ export default CardPublication = ({
   // Vérifie si la publication a été aimée par l'utilisateur connecté
   const isLikedByUser = likes.some(
     (like) =>
-      like.publication_id === publication.id &&
-      like.user_id === userConnect[0].id
+      like?.publication_id === publication?.id &&
+      like?.user_id === userConnect[0]?.id
   );
 
   return (
@@ -67,7 +67,7 @@ export default CardPublication = ({
           {publication?.userFirstname}
         </Text>
         <Text className="text-md font-bold ">{publication?.userLastname}</Text>
-        {userConnect[0].id === publication.userId && (
+        {userConnect[0]?.id === publication?.userId && (
           <Ionicons
             style={{ marginLeft: "auto" }}
             name="md-ellipsis-vertical-sharp"

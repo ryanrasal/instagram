@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, ToastAndroid } from "react-native";
+import { ScrollView, View, ToastAndroid, Button } from "react-native";
 import CardPublication from "../components/Home/CardPublication";
 import Stories from "../components/Home/Stories";
 import { useUserContext } from "../services/UserContext";
@@ -142,10 +142,7 @@ export default function Home({ navigation }) {
         "Content-Type": "application/json",
       },
     }).then(() => {
-      ToastAndroid.show(
-        " ✅ Publication supprimée ✅ !",
-        ToastAndroid.SHORT
-      );
+      ToastAndroid.show(" ✅ Publication supprimée ✅ !", ToastAndroid.SHORT);
       setReloadPublication(!reloadPublication);
     });
   };
@@ -158,7 +155,7 @@ export default function Home({ navigation }) {
         setTextSearchUser={setTextSearchUser}
         searchUser={searchUser}
       />
-      {/* <Button onPress={() => console.warn(likes)} title="press me " /> */}
+      <Button onPress={() => console.warn(userConnect[0])} title="press me " />
       {/* si toggleSearch est false, affiche les user de la recherche, sinon affiche les publications */}
       {!toggleSearch ? (
         <Stories users={users} navigateToProfil={navigateToProfil} />
@@ -166,7 +163,7 @@ export default function Home({ navigation }) {
         <ScrollView className={publications.length < 0 ? `pb-36` : "h-screen"}>
           {publications.map((publication) => (
             <CardPublication
-              key={publication.id}
+              key={publication?.id}
               likePost={likePost}
               likes={likes}
               userConnect={userConnect}

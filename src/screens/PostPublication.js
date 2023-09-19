@@ -25,7 +25,6 @@ export default PostPublication = ({ navigation }) => {
   });
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -47,7 +46,6 @@ export default PostPublication = ({ navigation }) => {
     const myHeaders = new Headers();
     const publication = JSON.stringify(dataPublication);
     const formData = new FormData();
-
     formData.append("publication", publication);
     if (image) {
       formData.append("picture", {
@@ -56,7 +54,6 @@ export default PostPublication = ({ navigation }) => {
         type: "image/jpeg",
       });
     }
-
     const requestOptions = {
       method: "POST",
       headers: myHeaders,

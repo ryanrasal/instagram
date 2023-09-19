@@ -1,33 +1,80 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function FormSignUp({ setFormSignIn }) {
+export default function FormSignUp({
+  setFormSignIn,
+  handleValueDataSignUp,
+  dataSignUp,
+  image,
+  pickImage,
+  setImage,
+  handleSignUp,
+}) {
   return (
-    <View>
+    <ScrollView>
+      <View className="my-2">
+        {!image && (
+          <TouchableOpacity
+            onPress={pickImage}
+            className="w-32 rounded-full mx-auto items-center flex-row justify-center bg-gray-400 h-32"
+          >
+            <Text className="text-white font-bold text-lg ">Photo</Text>
+          </TouchableOpacity>
+        )}
+        {image && (
+          <View className="relative">
+            <Image
+              className="w-32 rounded-full mx-auto h-32"
+              source={{ uri: image }}
+            />
+            <Ionicons
+              onPress={() => setImage(null)}
+              style={{ marginLeft: "auto", position: "absolute", right: 5 }}
+              name="close"
+              size={45}
+              color="red"
+            />
+          </View>
+        )}
+      </View>
+
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Prénom"}
-        name="firstname"
+        onChangeText={(text) => handleValueDataSignUp("firstname", text)}
+        value={dataSignUp.firstname}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Nom"}
-        name="lastname"
+        onChangeText={(text) => handleValueDataSignUp("lastname", text)}
+        value={dataSignUp.lastname}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Pseudo"}
-        name="pseudo"
+        onChangeText={(text) => handleValueDataSignUp("pseudo", text)}
+        value={dataSignUp.pseudo}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Email"}
-        name="email"
+        onChangeText={(text) => handleValueDataSignUp("email", text)}
+        value={dataSignUp.email}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Mot de passe"}
-        name="password"
+        onChangeText={(text) => handleValueDataSignUp("password", text)}
+        value={dataSignUp.password}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
@@ -36,24 +83,29 @@ export default function FormSignUp({ setFormSignIn }) {
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Adresse"}
-        name="address"
+        onChangeText={(text) => handleValueDataSignUp("address", text)}
+        value={dataSignUp.address}
       />
       <TextInput
         className="bg-white text-black mb-3 mx-10 p-2 rounded-lg "
         placeholder={"Téléphone"}
-        name="phone"
+        onChangeText={(text) => handleValueDataSignUp("phone", text)}
+        value={dataSignUp.phone}
       />
-      <TouchableOpacity className="bg-[#3747f6] mb-3 mx-10 p-2 rounded-lg">
+      <TouchableOpacity
+        onPress={handleSignUp}
+        className="bg-[#3747f6] mb-3 mx-10 p-2 rounded-lg"
+      >
         <Text className="text-white font-bold text-center text-lg">
           Enregistrer
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setFormSignIn(true)}
-        className="bg-[#000000] mx-10 p-2 rounded-lg"
+        className="bg-[#000000] mx-10 p-2 mb-16 rounded-lg"
       >
         <Text className="text-white font-bold text-center text-lg">Retour</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
