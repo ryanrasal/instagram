@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
+
 export default HeaderMyProfil = ({ userConnect }) => {
   return (
     <View>
@@ -13,7 +15,7 @@ export default HeaderMyProfil = ({ userConnect }) => {
           <Image
             className="h-24 w-24 rounded-full ml-4"
             source={{
-              uri: userConnect[0]?.image,
+              uri: `${ADDRESS_BACK_END}/uploads/${userConnect[0].image}`,
             }}
           />
         </View>
