@@ -1,13 +1,15 @@
-import { View, Image, Button, Text, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import React from "react";
 
-export default FriendRequest = ({ friendRequest }) => {
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
+
+export default FriendRequest = ({ friendRequest, confirmFriend }) => {
   return (
     <View className="items-center justify-center bg-gray-50 my-1 flex-row">
       <Image
         className="h-14 w-14   rounded-full"
         source={{
-          uri: friendRequest?.image,
+          uri: `${ADDRESS_BACK_END}/uploads/${friendRequest?.image}`,
         }}
       />
       <View className="flex-col ml-5">
@@ -20,7 +22,7 @@ export default FriendRequest = ({ friendRequest }) => {
         <Text className="text-xl ">vous a demandé en amis</Text>
         <View className="flex-row">
           <TouchableOpacity
-            onPress={() => console.warn(friendRequest)}
+            onPress={() => confirmFriend(friendRequest.id)}
             className="bg-[#3747f6] mb-3 mx-3 p-2 rounded-lg"
           >
             <Text className="text-white font-bold text-center text-lg">

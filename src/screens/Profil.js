@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import HeaderProfil from "../components/Profil/HeaderProfil";
 import PublicationMyProfil from "../components/MyProfil/PublicationMyProfil";
@@ -12,24 +12,20 @@ export default function Profil({ navigation }) {
   const { userConnect } = useUserContext();
   const route = useRoute();
   const { user } = route.params ? route.params : {};
+
   const [statusAdd, setStatusAdd] = useState(false);
-
-  const [dataFriendShip, setDataFriendShip] = useState([]);
-  const [isFriend, setIsFriend] = useState(false);
-
+  const [isFriend, setIsFriend] = useState();
   const [dataPostFriendShip, setDataPostFriendShip] = useState({
-    friend_id: user.id,
-    user_id: userConnect[0].id,
+    friend_id: user?.id,
+    user_id: userConnect[0]?.id,
     status: "pending",
   });
-
   const [publications, setPublications] = useState([]);
 
   useEffect(() => {
     fetch(`${ADDRESS_BACK_END}/publications/${user?.id}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(user.id);
         setPublications(data);
       })
       .catch((error) => {
@@ -39,17 +35,6 @@ export default function Profil({ navigation }) {
         );
       });
   }, [user?.id]);
-
-  useEffect(() => {
-    fetch(`${ADDRESS_BACK_END}/friendship`)
-      .then((response) => response.json())
-      .then((data) => {
-        setDataFriendShip(data);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des friendship", error);
-      });
-  }, []);
 
   const addFriend = async () => {
     try {
@@ -72,22 +57,46 @@ export default function Profil({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    fetch(
+      `${ADDRESS_BACK_END}/friendship/get?friend_id=${userConnect[0]?.id}&user_id=${user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.warn(data);
+        setIsFriend(data[0]);
+      });
+  }, []);
+
   return (
     <View className="mt-10">
       <HeaderProfil navigation={navigation} user={user} />
-      {!statusAdd ? (
-        <TouchableOpacity
-          onPress={addFriend}
-          className=" py-2 px-4 mx-3 mt-2 rounded-md  bg-[#3747f6]"
-        >
-          <Text className="text-white text-center">Ajouter</Text>
-        </TouchableOpacity>
+      {isFriend?.status === "accepted" ? (
+        <Button title="Se Désabonner" />
       ) : (
-        <Text className="text-center text-lg  font-bold">
-          Demande en cours...
-        </Text>
+        <View className=" py-2 px-4 mx-3 mt-2 rounded-md">
+          <Text className="text-center font-bold ">
+            {statusAdd ? (
+              "Demande en cours..."
+            ) : (
+              <TouchableOpacity
+                onPress={addFriend}
+                className=" py-2 px-4 mx-3 mt-2 rounded-md  bg-[#3747f6]"
+              >
+                <Text className="text-white text-center">Ajouter</Text>
+              </TouchableOpacity>
+            )}
+          </Text>
+        </View>
       )}
-      {isFriend ? (
+
+      {isFriend?.status === "accepted" ? (
         <View className="flex-row flex-wrap mt-4">
           {publications?.map((publication) => (
             <PublicationMyProfil
