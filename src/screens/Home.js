@@ -37,7 +37,6 @@ export default function Home({ navigation }) {
     fetch(`${ADDRESS_BACK_END}/publications`)
       .then((response) => response.json())
       .then((data) => {
-        console.warn(data);
         const reverseData = data?.reverse();
         setPublications(reverseData);
       })
@@ -51,6 +50,7 @@ export default function Home({ navigation }) {
 
   // navigation vers le profil d'un user
   function navigateToProfil(userId) {
+    console.warn(userId);
     navigation.navigate("Profil", {
       user: users.find((user) => user.id === userId),
     });
@@ -155,13 +155,11 @@ export default function Home({ navigation }) {
         setTextSearchUser={setTextSearchUser}
         searchUser={searchUser}
       />
-      <Button onPress={() => console.warn(userConnect[0])} title="press me " />
-      {/* si toggleSearch est false, affiche les user de la recherche, sinon affiche les publications */}
       {!toggleSearch ? (
         <Stories users={users} navigateToProfil={navigateToProfil} />
       ) : (
-        <ScrollView className={publications.length < 0 ? `pb-36` : "h-screen"}>
-          {publications.map((publication) => (
+        <ScrollView className={publications?.length < 0 ? `pb-36` : "h-screen"}>
+          {publications?.map((publication) => (
             <CardPublication
               key={publication?.id}
               likePost={likePost}

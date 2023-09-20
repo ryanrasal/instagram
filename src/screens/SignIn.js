@@ -128,7 +128,6 @@ export default function SignIn() {
       body: formData,
     };
     myHeaders.append("Content-Type", "multipart/form-data");
-    console.warn("coucou", requestOptions.body);
     fetch(`${ADDRESS_BACK_END}/users`, requestOptions)
       .then(() => {
         ToastAndroid.show(" ✅ Inscription réussite ✅ !", ToastAndroid.SHORT);

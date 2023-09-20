@@ -56,11 +56,14 @@ export default CardPublication = ({
   return (
     <View>
       {/* <Button onPress={() => console.warn(publication)} title="button" /> */}
-      <View className="flex-row items-center mx-3 mt-6 mb-3 ">
+      <TouchableOpacity
+        onPress={() => console.warn(publication.userId)}
+        className="flex-row items-center mx-3 mt-6 mb-3 "
+      >
         <Image
           className="rounded-full h-10 w-10 mr-3 "
           source={{
-            uri: publication?.userImage,
+            uri: `${ADDRESS_BACK_END}/uploads/${publication?.userImage}`,
           }}
         />
         <Text className="text-md font-bold mr-2">
@@ -75,7 +78,7 @@ export default CardPublication = ({
             color="black"
           />
         )}
-      </View>
+      </TouchableOpacity>
       <Image
         className="w-full h-48"
         source={{

@@ -1,5 +1,7 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image } from "react-native";
+
+const ADDRESS_BACK_END = process.env.EXPO_PUBLIC_ADDRESS_BACK_END;
 
 export default HeaderProfil = ({ user, navigation: { goBack } }) => {
   return (
@@ -12,7 +14,7 @@ export default HeaderProfil = ({ user, navigation: { goBack } }) => {
           <Image
             className="h-24 w-24 rounded-full ml-4"
             source={{
-              uri: user?.image,
+              uri: `${ADDRESS_BACK_END}/uploads/${user?.image}`,
             }}
           />
         </View>
